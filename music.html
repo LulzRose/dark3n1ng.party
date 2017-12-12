@@ -1,0 +1,378 @@
+<!DOCTYPE html><html><head>
+			<link rel="apple-touch-icon" sizes="180x180" href="/res/images/icons/apple-touch-icon.png">
+			<link rel="icon" type="image/png" href="/res/images/icons/favicon-32x32.png" sizes="32x32">
+			<link rel="icon" type="image/png" href="/res/images/icons/favicon-16x16.png" sizes="16x16">
+			<link rel="manifest" href="/res/manifest.json">
+			<link rel="mask-icon" href="/res/images/icons/safari-pinned-tab.svg" color="#000000">
+			<link rel="shortcut icon" href="/res/images/icons/favicon.ico">
+			<meta name="msapplication-config" content="/res/browserconfig.xml">
+			<meta name="theme-color" content="#000000">
+			<meta charset="UTF-8">
+			<link rel="stylesheet" type="text/css" href="/res/css/index.css">	
+		<script src="/res/scripts/jquery.min.js"></script><script src="/res/scripts/howler.min.js"></script><title>MUSIC BOX</title>	<script>
+		document.addEventListener("DOMContentLoaded", function(event) { 
+			var sound = new Howl({
+				src: ["/res/audio/bgm/music.wav"],
+				loop: true,
+				volume: 1
+			});
+
+			sound.play();
+
+			$(".button").click(function(){
+				sound.stop();
+
+				if (!$(this).attr("data-loop")) {
+
+					sound = new Howl({
+						src: [$(this).attr("data-src")],
+						loop: true,
+						volume: 1
+					});
+
+					sound.play();
+
+				} else {
+
+					sound = new Howl({
+						src: [$(this).attr("data-src")],
+						loop: false,
+						volume: 1
+					});
+
+					sound.play();
+
+					var that = this;
+
+					sound.once("end", function(){
+						sound = new Howl({
+							src: [$(that).attr("data-loop")],
+							loop: true,
+							volume: 1
+						});
+
+						sound.play();
+					});
+				}
+
+				$("#nowplaying h2").text($(this).attr("data-title"));
+				$("#nowplaying h5").text($(this).attr("data-from"));
+
+				if ($(this).attr("data-src") == "home.ogg") {
+					$(this).attr("data-clicked", parseInt($(this).attr("data-clicked")) + 1);
+
+					if (parseInt($(this).attr("data-clicked")) >= 50) {
+
+						sound.stop();
+
+						sound = new Howl({
+							src: ["/res/audio/bgm/superbgm.ogg"],
+							loop: true,
+							volume: 1
+						});
+						sound.play();
+					}
+				}
+			});
+		});
+	</script>
+	<style>
+		.box {
+			width: 90vw;
+			margin-left: 3vw;
+			background-color: #000;
+			border: 1px solid #FFF;
+			box-shadow: 3px 3px #FFF;
+			padding: 2vw;
+			margin-bottom: 1em;
+		}
+
+		.button {
+			width: 6vw;
+			height: 4vw;
+			padding-top: 2vw;
+			margin: 0.2em 0px;
+			font-size: 2vw;
+			display: inline-block;
+			text-align: center;
+			vertical-align: center;
+			cursor: pointer;
+			position: relative;
+			top: 0px;;
+			background-color: #000;
+			border: 1px solid #FFF;
+			box-shadow: 0px 3px #FFF;
+		}
+
+		.button:hover {
+			top: -2px;
+			box-shadow: 0px 5px #FFF;
+		}
+
+		.button:active {
+			top: 2px;
+			color: #000;
+			background-color: #FFF;
+			box-shadow: 0px 1px #FFF;
+		}
+
+		.button.big {
+			width: 15vw;
+			margin: 0.2em 0px;
+		}
+
+		.button.mega {
+			width: 100%;
+		}
+
+		h2 {
+			margin: 0;
+		}
+
+		#nowplaying {
+			color: #C0FF96;
+			background-color: #2F4024;
+			padding: 1em;
+			box-shadow: inset 0px 2px 16px #000;
+		}
+
+		.lack {
+			border: 1px solid #F00;
+			box-shadow: 0px 3px #F00;
+			color: #F00;
+		}
+
+		.lack:hover {
+			border: 1px solid #F00;
+			box-shadow: 0px 3px #F00;
+			color: #F00;
+			box-shadow: 0px 5px #F00;
+		}
+		.lack:active {
+			background-color: #F00;
+			color:#000;
+		}
+	</style>
+</head>
+<body>
+	<div id="contentloader">
+	<img id="loadtsuki" src="/res/images/loader/loadtsuki.png"/>
+	<img id="loadspin" src="/res/images/loader/loadspin.png"/>
+</div>
+
+<style>
+#contentloader {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #000;
+	z-index: 10000;
+	transition: 0.2s;
+}
+
+#loadtsuki {
+	position: absolute;
+	left: calc(50% - 48px);
+	top: calc(50% - 48px);
+}
+
+#loadspin {
+	position: absolute;
+	left: calc(50% - 46px);
+	top: calc(50% - 47px);
+	animation: LoaderSpin 2s infinite linear;
+}
+
+@keyframes LoaderSpin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.destroyedloader {
+	opacity: 0;
+	pointer-events: none;
+	transition: 0.5s !important;
+	
+}
+
+.destroyedloader #loadtsuki {
+	top: calc(50% - 100px);
+	transition: 0.5s ease-in !important;
+}
+
+.destroyedloader #loadspin {
+	top: calc(50% - 100px);
+	transition: 0.5s ease-in !important;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(event) { 
+	document.getElementById("contentloader").className = "destroyedloader";
+	document.getElementById("loadspin").src = "/res/images/loader/loadfinish.png";
+});
+window.onbeforeunload = function() {
+	document.getElementById("contentloader").classList.remove("destroyedloader");
+	document.getElementById("loadspin").src = "/res/images/loader/loadspin.png";
+}
+</script>
+
+<style>
+	#header {
+		position: relative;
+		z-index: 1;
+	}
+
+	#headerbar {
+		position: fixed;
+		width: 100%;
+		left: 0;
+		top: 0;
+		height: 20px;
+
+		background-color: #000;
+		box-shadow: 0px 1px #FFF, 0px 2px #000;
+	}
+
+	#headerstatus {
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: 1;
+	}
+
+	#headerfade_left {
+		position: fixed;
+		left: 150px;
+		top: 0px;
+		z-index: 1;
+	}
+
+	#headernews {
+		width: 100%;
+
+		font-family: Heading;
+		font-size: 16px;
+		letter-spacing: -4px;
+	}
+
+	#headernews p {
+		display: inline;
+		position: relative;
+		top: -2px;
+	}
+
+	#knob {
+		position: fixed;
+		left: 0;
+		top: 20px;
+	}
+
+	#knob2 {
+		position: fixed;
+		right: 0;
+		top: 20px;
+	}
+
+	#knob3 {
+		position: fixed;
+		right: 100px;
+		top: 20px;
+	}
+
+	#knob4 {
+		position: fixed;
+		left: 200px;
+		top: 20px;
+	}
+
+	#knob5 {
+		position: fixed;
+		left: 350px;
+		top: 20px;
+	}
+
+	#knob6 {
+		position: fixed;
+		left: 460px;
+		top: 20px;
+	}
+
+	#knob7 {
+		position: fixed;
+		left: 492px;
+		top: 20px;
+	}
+
+	#knob8 {
+		position: fixed;
+		right: 100px;
+		top: 20px;
+	}
+</style>	
+
+		<div id="overlay"></div><div id="overlay2"></div>	<div class="seperator"></div>
+	<center><h1>Music box</h1></center>
+	<div id="nowplaying"><center>
+		<h4>Now playing</h4>
+		<h2>---</h2>
+		<h5>click a button below to play</h5>
+	</center></div>
+	<br><br>
+	<div class="box" id="ambience">
+		<h2>/tsuki/ sings</h2>
+		<a href="https://www.youtube.com/watch?v=n5wV5s-ZfYc"><div class="button mega">Duvet</div></a>
+	</div>
+	<div class="box" id="ambience">
+		<h2>Ambience</h2>
+		
+	</div>
+	<div class="box" id="dataverses">
+		<h2>Board Pages</h2>
+		<div class="button" data-title="Dataverse ambience 1" data-from="by Blank Banshee" data-src="/musicb/bathsalt.mp3">1</div>
+		<div class="button" data-title="Dataverse ambience 2" data-from="Caramelldansen" data-src="/musicb/carmel.mp3">2</div>
+		<div class="button" data-title="Dataverse ambience 3" data-from="by Blank Banshee" data-src="/musicb/boys.mp3">3</div>
+		<div class="button" data-title="Dataverse ambience 4" data-from="by Blank Banshee" data-src="/musicb/clouds.mp3">4</div>
+		<div class="button" data-title="Dataverse ambience 5" data-from="by Blank Banshee" data-src="/musicb/dreamcast.mp3">5</div>
+		<div class="button" data-title="Dataverse ambience 6" data-from="by Blank Banshee" data-src="/musicb/gun.mp3">6</div>
+		<div class="button" data-title="Dataverse ambience 7" data-from="by Blank Banshee" data-src="/musicb/holo.mp3">7</div>
+		<div class="button" data-title="Dataverse ambience 8" data-from="by Blank Banshee" data-src="/musicb/hyper.mp3">8</div>
+		
+	</div>
+	<div class="box" id="dataverses">
+		<h2>Error pages</h2>
+		<div class="button" data-title="403" data-from="from Yume Nikki" data-src="/res/audio/bgm/403.wav">403</div>
+		<div class="button" data-title="404" data-from="from Drax" data-src="/res/audio/bgm/404.ogg">404</div>
+		<div class="button lack" data-title="500" data-from="from Bejeweled 2" data-src="/res/audio/bgm/error.wav">500</div>
+	</div>
+	<div class="box" id="dataverses">
+		<h2>Main pages</h2>
+		<div class="button big" data-title="Home" data-from="Bang Bang by Vokab Kompany" data-src="/bang.m4a" data-clicked="0">Home</div>
+		<div class="button big" data-title="Murder" data-from="Animals by Martin Garrix (Deadmau5 Remix)" data-src="/murder/animals.mp3">Murder</div>
+		
+	</div>
+	<div class="box" id="dataverses">
+		<h2>Login-walled pages</h2>
+		
+		<br>
+		
+	</div>
+	<div class="box" id="dataverses">
+		<h2>Chat countdown</h2>
+		
+	</div>
+	<div class="box" id="dataverses">
+		<h2>Miscellaneous</h2>
+		
+		<br>
+		
+		</div>
+	<br><br><br>
+</body>
+</html>
